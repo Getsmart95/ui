@@ -4,7 +4,7 @@ const Login = (props) => {
     const [accounts, setAccount] = useState([]);
     const [cardNumber, setCardNumber] = useState('Счет не выбран');
     const [balance, setBalance] = useState('Счет не выбран');
-    const [transfer, setTransfer] = useState({});
+    const [status, setStatus] = useState('Счет не выбран');
     useEffect(() => {
         const {ID} = getStorageItem();
             axios
@@ -14,61 +14,48 @@ const Login = (props) => {
                 })
     }, []);
 
-    const handleChange = e => {
-        const {name, value} = e.target;
-
-        setTransfer({
-            ...transfer,
-            [name]: value
-        })
-        console.log(transfer);
-    };
 
     const handleAccount = e => {
         const account = accounts.filter(({ID}) => ID === Number(e.target.value));
-            
-            
-            console.log(accounts.filter(({ID}) => ID === Number(e.target.value)));
-            console.log(Number(e.target.value));
-            console.log(account);
-            const {CardNumber, Balance, AccountNumber} = account[0];
+            const {CardNumber, Balance, Status} = account[0];
             setCardNumber(CardNumber);
             setBalance(Balance);
-            setTransfer({
-                ...transfer,
-                AccountNumber
-            })
+            setStatus(Status);
     }
-    const handleSubmit = e => {
-        e.preventDefault();
+    // Временно закоментил
+    // const handleSubmit = e => {
+    //     e.preventDefault();
         
-        const _data = {
-            ...transfer       
-        };
-        console.log(_data);
+    //     const _data = {
+    //         ...transfer       
+    //     };
+    //     console.log(_data);
         
-        const configs = {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        };
-            axios
-                .post(`transferTo/${_data.transferCardNumber}`, _data, configs)
-                .then(res => {
-                    console.log(res);             
-                    setTimeout(() => {
-                        // props.history.push(`/operation`);
-                    }, 3000)
-                })
-                .catch(err => {
-                    console.error(err);
-                })
-        };
+    //     const configs = {
+    //         headers: {
+    //             'Content-Type': 'multipart/form-data'
+    //         }
+    //     };
+    //         axios
+    //             .post(`transferTo/${_data.transferCardNumber}`, _data, configs)
+    //             .then(res => {
+    //                 if(res === false)
+    //                     alert('Неверный номер карты')
+    //                 else
+    //                     alert('Перевод успешно выполнен')
+    //                 setTimeout(() => {
+    //                     props.history.push(`/operation`);
+    //                 }, 3000)
+    //             })
+    //             .catch(err => {
+    //                 console.error(err);
+    //             })
+    // };
 
 
         return (
-            <form onSubmit={handleSubmit}>
-                
+            <form>
+                <h4>Список счетов</h4>
                 <div className="form-group">
                     <label>Выберите счет</label>
                     <select className="form-control" onChange={handleAccount}>
@@ -89,23 +76,10 @@ const Login = (props) => {
                     <input type="text" className="form-control" name="balance" value={balance} placeholder="Счет не выбран" />
                 </div>
 
-                <hr class="mb-4"/>
-
                 <div className="form-group">
-                    <label>Перевести на карту</label>
-                    <input type="text" className="form-control" name="transferCardNumber" onChange={handleChange} placeholder="Введите номер карты" />
+                    <label>Статус</label>
+                    <input type="text" className="form-control" name="Status" value={status} placeholder="Счет не выбран" />
                 </div>
-
-                <div className="form-group">
-                    <label>Сумма перевода</label>
-                    <input type="text" className="form-control" name="transferAmmount" onChange={handleChange} placeholder="Введите сумму перевода" />
-                </div>
-
-                <div className="form-group">
-                    <label>Введите сообщение получателю</label>
-                    <input type="text" className="form-control" name="message" onChange={handleChange} placeholder="Введите сообщение получателю" />
-                </div>
-                <button type="submit" className="btn btn-primary btn-block">Перевести</button>
                
             </form>
         )
